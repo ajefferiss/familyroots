@@ -7,6 +7,11 @@
         mc:Ignorable="d"
         Title="Family Roots" Height="450" Width="800">
     <Grid>
-
+        <Menu>
+            <MenuItem Header="_File">
+                <MenuItem Header="_Open" Click="MenuItem_Open_Clicked" />
+                <MenuItem Header="_Import" Click="MenuItem_Import_Clicked" />
+            </MenuItem>
+        </Menu>
     </Grid>
 </Window>
