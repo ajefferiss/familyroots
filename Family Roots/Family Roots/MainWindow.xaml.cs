@@ -1,4 +1,5 @@
-﻿using GeneGenie.Gedcom.Parser;
+﻿using Family_Roots.datastore;
+using GeneGenie.Gedcom.Parser;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -13,12 +14,14 @@ using System.Windows.Shapes;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace Family_Roots
-{
+{ 
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
+        private DatabaseHandler _db = new DatabaseHandler();
+
         public MainWindow()
         {
             InitializeComponent();

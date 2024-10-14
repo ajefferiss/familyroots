@@ -11,6 +11,9 @@
 
   <ItemGroup>
     <PackageReference Include="GeneGenie.Gedcom" Version="1.0.3" />
+    <PackageReference Include="Microsoft.Data.Sqlite.Core" Version="8.0.10" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
   </ItemGroup>
 
 </Project>
