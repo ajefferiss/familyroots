@@ -1,30 +1,26 @@
-﻿using Family_Roots.datastore;
-using GeneGenie.Gedcom.Parser;
+﻿using Family_Roots.dal.import;
+using Family_Roots.dal.store;
 using System.IO;
-using System.Text;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Family_Roots
-{ 
+{
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : Window
     {
-        private DatabaseHandler _db = new DatabaseHandler();
+        public static readonly string DataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FamilyRoots");
+        private FamilyRootsStore _db = new FamilyRootsStore();
 
         public MainWindow()
         {
             InitializeComponent();
+
+            if (!Directory.Exists(DataDirectory))
+            {
+                Directory.CreateDirectory(DataDirectory);
+            }
         }
 
         private void MenuItem_Open_Clicked(object sender, RoutedEventArgs e)
@@ -43,14 +39,15 @@ namespace Family_Roots
 
             if (result == true)
             {
-                string filename = dialog.FileName;
-                var gedcomReader = GedcomRecordReader.CreateReader(filename);
-                var helens = gedcomReader.Database.Individuals.FindAll(i => i.Names.First().Given.StartsWith("Helen"));
-                
-                foreach (var indi in helens)
+                var importer = new GEDComImporter(_db);
+
+                try
                 {
-                    var family = indi.GetFamily();
-                    var children = gedcomReader.Database.Individuals.FindAll(i => family.Children.Contains(i.XrefId));
+                    importer.importResource(dialog.FileName);
+                }
+                catch (ImportException ex)
+                {
+
                 }
             }
         }
