@@ -2,31 +2,29 @@
 using SQLite;
 using System.IO;
 
-namespace Family_Roots.datastore
+namespace Family_Roots.dal.store
 {
-    public class DatabaseHandler
+    public class FamilyRootsStore
     {
         private SQLiteConnection _db;
+        private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public DatabaseHandler(string dbPath)
+        public FamilyRootsStore(string dbPath)
         {
-            var directory = Path.GetDirectoryName(dbPath);
-            if (!String.IsNullOrEmpty(directory) && !Directory.Exists(directory))
-            {
-                Directory.CreateDirectory(directory);
-            }
-
+            Logger.Info("Creating datastore under {0}", dbPath);
             _db = new SQLiteConnection(dbPath);
 
             CreateTable();
         }
 
-        public DatabaseHandler() : this(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FamilyRoots", "familyroots.db"))
+        public FamilyRootsStore() : this(Path.Combine(MainWindow.DataDirectory, "familyroots.db"))
         {
         }
 
         private void CreateTable()
         {
+            Logger.Info("Creating table structure");
+
             _db.CreateTable<DatePlace>();
             _db.CreateTable<Adoption>();
             _db.CreateTable<AdoptedPerson>();
@@ -37,6 +35,11 @@ namespace Family_Roots.datastore
             _db.CreateTable<LocationInfo>();
             _db.CreateTable<Census>();
             _db.CreateTable<Person>();
+        }
+
+        public void AddPerson(Person person)
+        {
+            _db.Insert(person);
         }
     }
 }
