@@ -11,8 +11,10 @@
 
   <ItemGroup>
     <PackageReference Include="GeneGenie.Gedcom" Version="1.0.3" />
+    <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.10" />
     <PackageReference Include="NLog" Version="5.3.4" />
-    <PackageReference Include="WatsonORM.Sqlite" Version="3.0.9" />
+    <PackageReference Include="sqlite-net-pcl" Version="1.9.172" />
+    <PackageReference Include="SQLiteNetExtensions" Version="2.1.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -22,9 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="GedcomParser">
-      <HintPath>..\..\..\GedcomParser\src\GedcomParser\bin\Release\net6\GedcomParser.dll</HintPath>
-    </Reference>
+    <Folder Include="resources\" />
   </ItemGroup>
 
 </Project>
