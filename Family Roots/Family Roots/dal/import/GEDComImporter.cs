@@ -1,9 +1,10 @@
-﻿using Family_Roots.dal.store;
-using GedcomParser.Services;
-using System.IO;
-
-namespace Family_Roots.dal.import
+﻿namespace Family_Roots.DAL.Import
 {
+    using Family_Roots.DAL.Store;
+    using Family_Roots.DAL.Store.Entities;
+    using GedcomParser.Services;
+    using System.IO;
+
     public class GEDComImporter : IFamilyHistoryImporter
     {
         private FamilyRootsStore store;
@@ -14,7 +15,7 @@ namespace Family_Roots.dal.import
             this.store = dataStore;
         }
 
-        public void importResource(string resource)
+        public void ImportResource(string resource)
         {
             Logger.Info("Importing GEDCom resource from {}", resource);
             var detailsToImport = new List<ImportPerson>();
@@ -57,10 +58,10 @@ namespace Family_Roots.dal.import
                         Birth = convertToDatePlace(indi.Birth),
                         Death = convertToDatePlace(indi.Death),
                         Address = convertToAddress(indi.Address),
-                        Census = convertToDatePlaceList(indi.Census),
-                        Destination = convertToDatePlaceList(indi.Destination),
-                        Events = convertToEvents(indi.Events),
-                        EventDates = convertToEventDates(indi.Ev),
+                        //Census = convertToDatePlaceList(indi.Census),
+                        //Destination = convertToDatePlaceList(indi.Destination),
+                        //Events = convertToEvents(indi.Events),
+                        //EventDates = convertToEventDates(indi.Events),
 
                     }
                 );
@@ -74,13 +75,12 @@ namespace Family_Roots.dal.import
             return new Person
             {
                 GEDId = individual.Id,
-                UID = individual.Uid,
+                Uid = individual.Uid,
                 IdNumber = individual.IdNumber,
                 FirstName = individual.FirstName,
                 LastName = individual.LastName,
                 Title = individual.Title,
                 Gender = individual.Gender,
-                Dead = individual.Death != null,
                 Education = individual.Education,
                 Religion = individual.Religion,
                 Nationality = individual.Nationality,
@@ -108,6 +108,8 @@ namespace Family_Roots.dal.import
         {
             if (address == null) { return null; }
 
+            return null;
+            /*
             return new Address
             {
                 AddressLine1 = address.Street,
@@ -120,6 +122,7 @@ namespace Family_Roots.dal.import
                 Email = address.Email.FirstOrDefault(s => !string.IsNullOrEmpty(s)) ?? "",
                 Web = address.Web.FirstOrDefault(s => !string.IsNullOrEmpty(s)) ?? ""
             };
+            */
         }
 
         private List<DatePlace> convertToDatePlaceList(List<GedcomParser.Entities.DatePlace> censusList)

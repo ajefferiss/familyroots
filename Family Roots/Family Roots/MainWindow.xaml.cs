@@ -1,10 +1,10 @@
-﻿using Family_Roots.dal.import;
-using Family_Roots.dal.store;
-using System.IO;
-using System.Windows;
-
-namespace Family_Roots
+﻿namespace Family_Roots
 {
+    using Family_Roots.DAL.Import;
+    using Family_Roots.DAL.Store;
+    using System.IO;
+    using System.Windows;
+
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
@@ -43,7 +43,7 @@ namespace Family_Roots
 
                 try
                 {
-                    importer.importResource(dialog.FileName);
+                    importer.ImportResource(dialog.FileName);
                 }
                 catch (ImportException ex)
                 {
