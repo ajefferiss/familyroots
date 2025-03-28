@@ -10,5 +10,4 @@ namespace Family_Roots
     public partial class App : Application
     {
     }
-
 }

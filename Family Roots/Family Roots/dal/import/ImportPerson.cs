@@ -4,7 +4,7 @@
     using Family_Roots.DAL.Store.Entities;
 
     /// <summary>
-    /// Holds information read from a import before it is stored within the <see cref="FamilyRootsStore"/>.
+    /// Holds information read from a import before it is stored within the <see cref="FamilyRootsContext"/>.
     /// </summary>
     public class ImportPerson
     {

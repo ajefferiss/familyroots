@@ -7,10 +7,10 @@
 
     public class GEDComImporter : IFamilyHistoryImporter
     {
-        private FamilyRootsStore store;
+        private FamilyRootsContext store;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
-        public GEDComImporter(FamilyRootsStore dataStore)
+        public GEDComImporter(FamilyRootsContext dataStore)
         {
             this.store = dataStore;
         }

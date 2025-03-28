@@ -10,8 +10,8 @@
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static readonly string DataDirectory = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FamilyRoots");
-        private FamilyRootsStore _db = new FamilyRootsStore();
+        public static readonly string DataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Properties.Settings.Default.ConfigDirectory);
+        private FamilyRootsContext _db = new FamilyRootsContext();
 
         public MainWindow()
         {
