@@ -28,36 +28,6 @@ namespace Family_Roots.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Contacts",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    Type = table.Column<int>(type: "INTEGER", nullable: false),
-                    AddressId = table.Column<int>(type: "INTEGER", nullable: false),
-                    Value = table.Column<string>(type: "TEXT", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Contacts", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "DatePlaceEntities",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "INTEGER", nullable: false)
-                        .Annotation("Sqlite:Autoincrement", true),
-                    DatePlace = table.Column<int>(type: "INTEGER", nullable: false),
-                    Person = table.Column<int>(type: "INTEGER", nullable: false),
-                    Type = table.Column<int>(type: "INTEGER", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_DatePlaceEntities", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "DatePlaces",
                 columns: table => new
                 {
@@ -76,18 +46,23 @@ namespace Family_Roots.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Events",
+                name: "Contacts",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "INTEGER", nullable: false)
                         .Annotation("Sqlite:Autoincrement", true),
-                    EventName = table.Column<string>(type: "TEXT", nullable: false),
-                    DatePlace = table.Column<int>(type: "INTEGER", nullable: false),
-                    Person = table.Column<int>(type: "INTEGER", nullable: false)
+                    ContactType = table.Column<int>(type: "INTEGER", nullable: false),
+                    AddressId = table.Column<int>(type: "INTEGER", nullable: true),
+                    ContactValue = table.Column<string>(type: "TEXT", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.PrimaryKey("PK_Contacts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Contacts_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id");
                 });
 
             migrationBuilder.CreateTable(
@@ -179,10 +154,85 @@ namespace Family_Roots.Migrations
                         principalColumn: "Id");
                 });
 
+            migrationBuilder.CreateTable(
+                name: "DatePlaceEntities",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    DatePlaceId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PersonId = table.Column<int>(type: "INTEGER", nullable: true),
+                    EntityType = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_DatePlaceEntities", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_DatePlaceEntities_DatePlaces_DatePlaceId",
+                        column: x => x.DatePlaceId,
+                        principalTable: "DatePlaces",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_DatePlaceEntities_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "INTEGER", nullable: false)
+                        .Annotation("Sqlite:Autoincrement", true),
+                    EventName = table.Column<string>(type: "TEXT", nullable: false),
+                    DatePlaceId = table.Column<int>(type: "INTEGER", nullable: true),
+                    PersonId = table.Column<int>(type: "INTEGER", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_DatePlaces_DatePlaceId",
+                        column: x => x.DatePlaceId,
+                        principalTable: "DatePlaces",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Events_Persons_PersonId",
+                        column: x => x.PersonId,
+                        principalTable: "Persons",
+                        principalColumn: "Id");
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Adoptions_DatePlaceId",
                 table: "Adoptions",
                 column: "DatePlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Contacts_AddressId",
+                table: "Contacts",
+                column: "AddressId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DatePlaceEntities_DatePlaceId",
+                table: "DatePlaceEntities",
+                column: "DatePlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_DatePlaceEntities_PersonId",
+                table: "DatePlaceEntities",
+                column: "PersonId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_DatePlaceId",
+                table: "Events",
+                column: "DatePlaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_PersonId",
+                table: "Events",
+                column: "PersonId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Persons_AdoptedId",

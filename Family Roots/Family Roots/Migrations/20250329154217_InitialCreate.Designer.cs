@@ -9,8 +9,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Family_Roots.Migrations
 {
-    [DbContext(typeof(FamilyRootsContext))]
-    [Migration("20250312110247_InitialCreate")]
+    [DbContext(typeof(ApplicationDbContext))]
+    [Migration("20250329154217_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -84,17 +84,19 @@ namespace Family_Roots.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("AddressId")
+                    b.Property<int?>("AddressId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Type")
+                    b.Property<int>("ContactType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<string>("Value")
+                    b.Property<string>("ContactValue")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AddressId");
 
                     b.ToTable("Contacts");
                 });
@@ -140,16 +142,20 @@ namespace Family_Roots.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DatePlace")
+                    b.Property<int?>("DatePlaceId")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Person")
+                    b.Property<int?>("EntityType")
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("Type")
+                    b.Property<int?>("PersonId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DatePlaceId");
+
+                    b.HasIndex("PersonId");
 
                     b.ToTable("DatePlaceEntities");
                 });
@@ -160,17 +166,21 @@ namespace Family_Roots.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("INTEGER");
 
-                    b.Property<int>("DatePlace")
+                    b.Property<int?>("DatePlaceId")
                         .HasColumnType("INTEGER");
 
                     b.Property<string>("EventName")
                         .IsRequired()
                         .HasColumnType("TEXT");
 
-                    b.Property<int>("Person")
+                    b.Property<int?>("PersonId")
                         .HasColumnType("INTEGER");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("DatePlaceId");
+
+                    b.HasIndex("PersonId");
 
                     b.ToTable("Events");
                 });
@@ -284,6 +294,45 @@ namespace Family_Roots.Migrations
                         .HasForeignKey("DatePlaceId");
 
                     b.Navigation("DatePlace");
+                });
+
+            modelBuilder.Entity("Family_Roots.DAL.Store.Entities.Contact", b =>
+                {
+                    b.HasOne("Family_Roots.DAL.Store.Entities.Address", "Address")
+                        .WithMany()
+                        .HasForeignKey("AddressId");
+
+                    b.Navigation("Address");
+                });
+
+            modelBuilder.Entity("Family_Roots.DAL.Store.Entities.DatePlaceEntity", b =>
+                {
+                    b.HasOne("Family_Roots.DAL.Store.Entities.DatePlace", "DatePlace")
+                        .WithMany()
+                        .HasForeignKey("DatePlaceId");
+
+                    b.HasOne("Family_Roots.DAL.Store.Entities.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId");
+
+                    b.Navigation("DatePlace");
+
+                    b.Navigation("Person");
+                });
+
+            modelBuilder.Entity("Family_Roots.DAL.Store.Entities.Event", b =>
+                {
+                    b.HasOne("Family_Roots.DAL.Store.Entities.DatePlace", "DatePlace")
+                        .WithMany()
+                        .HasForeignKey("DatePlaceId");
+
+                    b.HasOne("Family_Roots.DAL.Store.Entities.Person", "Person")
+                        .WithMany()
+                        .HasForeignKey("PersonId");
+
+                    b.Navigation("DatePlace");
+
+                    b.Navigation("Person");
                 });
 
             modelBuilder.Entity("Family_Roots.DAL.Store.Entities.Person", b =>
