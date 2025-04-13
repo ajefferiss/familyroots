@@ -1,5 +1,7 @@
 ﻿namespace Family_Roots.DAL.Import
 {
+    using System;
+
     /// <summary>
     /// A exception to throw during import errors of genealogy resources.
     /// </summary>
