@@ -4,7 +4,7 @@
     using Family_Roots.DAL.Store.Entities;
 
     /// <summary>
-    /// Holds information read from a import before it is stored within the <see cref="FamilyRootsContext"/>.
+    /// Holds information read from a import before it is stored within the <see cref="ApplicationDbContext"/>.
     /// </summary>
     public class ImportPerson
     {
@@ -12,16 +12,6 @@
         /// Gets or sets the Person being imported.
         /// </summary>
         public Person Person { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Birth <see cref="DatePlace"/> for a imported person. Defaults to null.
-        /// </summary>
-        public DatePlace? Birth { get; set; }
-
-        /// <summary>
-        /// Gets or sets the Death <see cref="DatePlace"/> for a imported person. Defaults to null.
-        /// </summary>
-        public DatePlace? Death { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the <see cref="Address" /> for a imported person. Defaults to null.

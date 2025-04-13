@@ -10,6 +10,6 @@
         /// </summary>
         /// <param name="resource">The path to the resource to import.</param>
         /// <exception cref="ImportException">Thrown when <paramref name="resource"> is empty or when import fails</exception>
-        void ImportResource(string resource);
+        Task ImportResource(string resource);
     }
 }

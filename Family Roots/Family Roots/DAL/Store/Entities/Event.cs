@@ -17,13 +17,13 @@
         public string EventName { get; set; } = string.Empty;
 
         /// <summary>
-        /// Gets or sets the <see cref="DatePlace"/> ID for the event.
+        /// Gets or sets the <see cref="DatePlace"/> for the event.
         /// </summary>
-        public int DatePlace { get; set; }
+        public DatePlace? DatePlace { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="Person"/> ID for the event.
+        /// Gets or sets the <see cref="Person"/> for the event.
         /// </summary>
-        public int Person { get; set; }
+        public Person? Person { get; set; }
     }
 }

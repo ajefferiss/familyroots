@@ -9,7 +9,7 @@
     /// Provides interactions with the datastore entities.
     /// </summary>
     [SuppressMessage("StyleCop.CSharp.OrderingRules", "SA1201:ElementsMustAppearInTheCorrectOrder", Justification = "Reviewed.")]
-    public class FamilyRootsContext : DbContext
+    public class ApplicationDbContext : DbContext
     {
         private string dbPath;
 
@@ -53,9 +53,9 @@
         public DbSet<Person> Persons { get; set; }
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="FamilyRootsContext"/> class.
+        /// Initializes a new instance of the <see cref="ApplicationDbContext"/> class.
         /// </summary>
-        public FamilyRootsContext()
+        public ApplicationDbContext()
         {
             this.dbPath = Path.Join(MainWindow.DataDirectory, Properties.Settings.Default.DatabaseFile);
         }
@@ -65,5 +65,7 @@
         /// </summary>
         /// <param name="options">Database options.</param>
         protected override void OnConfiguring(DbContextOptionsBuilder options) => options.UseSqlite($"Data Source={this.dbPath}");
+
+        
     }
 }

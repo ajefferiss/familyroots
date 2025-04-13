@@ -1,21 +1,27 @@
 ﻿namespace Family_Roots.DAL.Import
 {
+    using System;
+    using System.IO;
+    using System.Threading.Tasks;
+    using Family_Roots.DAL.Repository;
     using Family_Roots.DAL.Store;
     using Family_Roots.DAL.Store.Entities;
     using GedcomParser.Services;
-    using System.IO;
+    using Microsoft.EntityFrameworkCore;
 
     public class GEDComImporter : IFamilyHistoryImporter
     {
-        private FamilyRootsContext store;
+        private readonly ApplicationDbContext store;
         private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
+        private PersonRepository personRepository;
 
-        public GEDComImporter(FamilyRootsContext dataStore)
+        public GEDComImporter(ApplicationDbContext dataStore)
         {
             this.store = dataStore;
+            this.personRepository = new PersonRepository(this.store);
         }
 
-        public void ImportResource(string resource)
+        public async Task ImportResource(string resource)
         {
             Logger.Info("Importing GEDCom resource from {}", resource);
             var detailsToImport = new List<ImportPerson>();
@@ -23,124 +29,148 @@
 
             foreach (var indi in gedComResult.Persons)
             {
-                // Person dates
-
-
-
-                //List<LocationInfo> locations = convertToLocations(indi);
-                //List<Destination> destinations = convertToDestinations();
-                //List<Events> events = convertToEvents(indi.Events);
-                //List<EventDates> eventDates = convertToEventDates(indi.Events);
-
                 if (indi == null)
                 {
                     Logger.Info("Not importing null person");
                     continue;
                 }
 
-                detailsToImport.Add(
-                    new ImportPerson
-                    {
-                        /***
-                         
-        
-        
-        
-        public List<AdoptedPerson> AdoptedPersons { get; set; } = new List<AdoptedPerson>();
-        public List<Adoption> Adoptions { get; set; } = new List<Adoption>();
-        public List<Events> Events { get; set; } = new List<Events>();
-        public List<EventDates> EventDates { get; set; } = new List<EventDates>();
-        
-        
-                         */
 
-                        Person = convertToPerson(indi),
-                        Birth = convertToDatePlace(indi.Birth),
-                        Death = convertToDatePlace(indi.Death),
-                        Address = convertToAddress(indi.Address),
-                        //Census = convertToDatePlaceList(indi.Census),
-                        //Destination = convertToDatePlaceList(indi.Destination),
-                        //Events = convertToEvents(indi.Events),
-                        //EventDates = convertToEventDates(indi.Events),
+                try
+                {
 
-                    }
-                );
+                    var personToAdd = ConvertToPerson(indi);
+                    var personAdded = await this.personRepository.Create(personToAdd);
+                } 
+                catch (ArgumentNullException ane)
+                {
+                    Logger.Error(ane, "Error converting person: {0}", indi);
+                }
+
+                    //this.store.Add(personToAdd);
+                    //await this.store.SaveChangesAsync();
+
+                    //var contacts = CreateContactDetails(indi.Address, personToAdd.LastAddress);
+                    //var events = CreateEvents(indi.Events, personToAdd);
+
+                    //this.store.Add(contacts);
+                    //this.store.Add(events);
+                    //await this.store.SaveChangesAsync();
+          
             }
-
-            // Save details to DB
         }
 
-        private Person convertToPerson(GedcomParser.Entities.Person individual)
+        private static Person ConvertToPerson(GedcomParser.Entities.Person individual)
         {
             return new Person
             {
                 GEDId = individual.Id,
-                Uid = individual.Uid,
-                IdNumber = individual.IdNumber,
-                FirstName = individual.FirstName,
-                LastName = individual.LastName,
-                Title = individual.Title,
-                Gender = individual.Gender,
-                Education = individual.Education,
-                Religion = individual.Religion,
-                Nationality = individual.Nationality,
-                Note = individual.Note,
-                Occupation = individual.Occupation,
-                Health = individual.Health,
+                Uid = GetStringOrDefault(individual.Uid),
+                IdNumber = GetStringOrDefault(individual.IdNumber),
+                FirstName = GetStringOrDefault(individual.FirstName),
+                LastName = GetStringOrDefault(individual.LastName),
+                Title = GetStringOrDefault(individual.Title),
+                Gender = GetStringOrDefault(individual.Gender),
+                Birth = CreateDatePlace(individual.Birth),
+                Death = CreateDatePlace(individual.Death),
+                Buried = CreateDatePlace(individual.Buried),
+                Baptized = CreateDatePlace(individual.Baptized),
+                Education = GetStringOrDefault(individual.Education),
+                Religion = GetStringOrDefault(individual.Religion),
+                Nationality = GetStringOrDefault(individual.Nationality),
+                Note = GetStringOrDefault(individual.Note),
+                Changed = GetStringOrDefault(individual.Changed),
+                Occupation = GetStringOrDefault(individual.Occupation),
+                Health = GetStringOrDefault(individual.Health),
+                LastAddress = CreateAddress(individual.Address),
+                Adopted = CreateAdopted(individual.Adoption),
+                Graduation = CreateDatePlace(individual.Graduation),
             };
         }
 
-        private DatePlace? convertToDatePlace(GedcomParser.Entities.DatePlace date)
+        private static DatePlace? CreateDatePlace(GedcomParser.Entities.DatePlace date)
         {
-            if (date == null) { return null; }
+            if (date == null)
+            {
+                return null;
+            }
 
             return new DatePlace
             {
-                Date = (date.Date != null) ? date.Date : String.Empty,
-                Place = (date.Place != null) ? date.Place : String.Empty,
-                Latitude = (date.Place != null) ? date.Place : String.Empty,
-                Longitude = (date.Place != null) ? date.Place : String.Empty,
-                Note = date.Note
+                Date = GetStringOrDefault(date.Date),
+                Place = GetStringOrDefault(date.Place),
+                Latitude = GetStringOrDefault(date.Latitude),
+                Longitude = GetStringOrDefault(date.Longitude),
+                Note = GetStringOrDefault(date.Note),
+                Description = GetStringOrDefault(date.Description),
             };
         }
 
-        private Address? convertToAddress(GedcomParser.Entities.Address address)
+        private static Address? CreateAddress(GedcomParser.Entities.Address address)
         {
-            if (address == null) { return null; }
-
-            return null;
-            /*
-            return new Address
+            if (address == null)
             {
-                AddressLine1 = address.Street,
-                City = address.City,
-                State = address.State,
-                PostalCode = address.ZipCode,
-                Country = address.Country,
-                Phone = address.Phone.FirstOrDefault(s => !string.IsNullOrEmpty(s)) ?? "",
-                Fax = address.Fax.FirstOrDefault(s => !string.IsNullOrEmpty(s)) ?? "",
-                Email = address.Email.FirstOrDefault(s => !string.IsNullOrEmpty(s)) ?? "",
-                Web = address.Web.FirstOrDefault(s => !string.IsNullOrEmpty(s)) ?? ""
-            };
-            */
-        }
-
-        private List<DatePlace> convertToDatePlaceList(List<GedcomParser.Entities.DatePlace> censusList)
-        {
-            List<DatePlace> census = new List<DatePlace>();
-
-            foreach (var c in censusList)
-            {
-                var datePlace = convertToDatePlace(c);
-                if (datePlace == null)
-                {
-                    Logger.Debug("Not adding a null DatePlace to list");
-                    continue;
-                }
-                census.Add(datePlace);
+                return null;
             }
 
-            return census;
+            return new Address
+            {
+                Street = GetStringOrDefault(address.Street),
+                City = GetStringOrDefault(address.City),
+                State = GetStringOrDefault(address.State),
+                ZipCode = GetStringOrDefault(address.ZipCode),
+                Country = GetStringOrDefault(address.Country),
+            };
+        }
+
+        private static Adoption? CreateAdopted(GedcomParser.Entities.Adoption adoption)
+        {
+            if (adoption == null)
+            {
+                return null;
+            }
+
+            return new Adoption
+            {
+                DatePlace = CreateDatePlace(adoption.DatePlace),
+                Type = adoption.Type,
+                AdoptingParents = adoption.AdoptingParents,
+                Note = GetStringOrDefault(adoption.Note),
+            };
+        }
+
+        private static List<Contact> CreateContactDetails(GedcomParser.Entities.Address contact, Address? address)
+        {
+            var contactDetails = new List<Contact>();
+
+            contactDetails.AddRange(CreateContactDetail(contact.Phone, ContactType.Phone, address));
+            contactDetails.AddRange(CreateContactDetail(contact.Fax, ContactType.Fax, address));
+            contactDetails.AddRange(CreateContactDetail(contact.Email, ContactType.Email, address));
+            contactDetails.AddRange(CreateContactDetail(contact.Web, ContactType.Web, address));
+
+            return contactDetails;
+        }
+
+        private static List<Contact> CreateContactDetail(List<string> contacts, ContactType contactType, Address? address = null)
+        {
+            return contacts.Where(c => !string.IsNullOrWhiteSpace(c)).Select(c => new Contact { ContactType = contactType, Address = address, ContactValue = c }).ToList();
+        }
+
+        private static List<Event> CreateEvents(Dictionary<string, List<GedcomParser.Entities.DatePlace>> personsEvents, Person person)
+        {
+            var events = new List<Event>();
+
+            foreach (var personEvent in personsEvents)
+            {
+                events.AddRange(personEvent.Value.Select(d => new Event { EventName = personEvent.Key, DatePlace = CreateDatePlace(d), Person = person }).ToList());
+            }
+
+            return events;
+        }
+
+        private static string GetStringOrDefault(string? value)
+        {
+            return string.IsNullOrEmpty(value) ? string.Empty : value;
         }
     }
 }

@@ -11,7 +11,7 @@
     public partial class MainWindow : Window
     {
         public static readonly string DataDirectory = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), Properties.Settings.Default.ConfigDirectory);
-        private FamilyRootsContext _db = new FamilyRootsContext();
+        private ApplicationDbContext _db = new ApplicationDbContext();
 
         public MainWindow()
         {
@@ -21,6 +21,8 @@
             {
                 Directory.CreateDirectory(DataDirectory);
             }
+
+            _db.Database.EnsureCreated();
         }
 
         private void MenuItem_Open_Clicked(object sender, RoutedEventArgs e)
@@ -28,7 +30,7 @@
 
         }
 
-        private void MenuItem_Import_Clicked(object sender, RoutedEventArgs e)
+        private async void MenuItem_Import_Clicked(object sender, RoutedEventArgs e)
         {
             var dialog = new Microsoft.Win32.OpenFileDialog();
             dialog.FileName = "Document";
@@ -43,7 +45,7 @@
 
                 try
                 {
-                    importer.ImportResource(dialog.FileName);
+                    await importer.ImportResource(dialog.FileName);
                 }
                 catch (ImportException ex)
                 {

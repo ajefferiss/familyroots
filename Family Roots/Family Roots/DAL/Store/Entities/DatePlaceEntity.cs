@@ -13,16 +13,16 @@
         /// <summary>
         /// Gets or sets the <see cref="DatePlace"/> ID for the entity.
         /// </summary>
-        public int DatePlace { get; set; }
+        public DatePlace? DatePlace { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="Person"/> ID for the entity.
         /// </summary>
-        public int Person { get; set; }
+        public Person? Person { get; set; }
 
         /// <summary>
         /// Gets or sets the <see cref="DatePlaceEntities"/> for the entity.
         /// </summary>
-        public int Type { get; set; }
+        public DatePlaceEntities? EntityType { get; set; }
     }
 }

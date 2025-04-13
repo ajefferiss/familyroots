@@ -13,16 +13,16 @@
         /// <summary>
         /// Gets or sets the <see cref="ContactType"/> for the entry.
         /// </summary>
-        public ContactType Type { get; set; }
+        public ContactType ContactType { get; set; }
 
         /// <summary>
-        /// Gets or sets the <see cref="Address"/> ID for the entry.
+        /// Gets or sets the <see cref="Address"/> for the entry.
         /// </summary>
-        public int AddressId { get; set; }
+        public Address? Address { get; set; } = null;
 
         /// <summary>
         /// Gets or sets the value for the <see cref="ContactType"/>, defaults to a empty string.
         /// </summary>
-        public string Value { get; set; } = string.Empty;
+        public string ContactValue { get; set; } = string.Empty;
     }
 }
