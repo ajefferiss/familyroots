@@ -51,5 +51,10 @@
                 }
             }
         }
+
+        private void MenuItem_Exit_Clicked(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }

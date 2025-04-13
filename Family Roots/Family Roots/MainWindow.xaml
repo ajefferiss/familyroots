@@ -11,6 +11,8 @@
             <MenuItem Header="_File">
                 <MenuItem Header="_Open" Click="MenuItem_Open_Clicked" />
                 <MenuItem Header="_Import" Click="MenuItem_Import_Clicked" />
+                <Separator />
+                <MenuItem Header="_Exit" Click="MenuItem_Exit_Clicked" />
             </MenuItem>
         </Menu>
     </Grid>
